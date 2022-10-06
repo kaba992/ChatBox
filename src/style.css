@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+	font-family: "Inter", sans-serif;
 }
 
 html,
@@ -11,7 +11,7 @@ body {
 	width: 100%;
 	color: #fff;
 	overflow: hidden;
-  font-family: 'Inter', sans-serif;
+	font-family: "Inter", sans-serif;
 }
 ::-webkit-scrollbar {
 	display: none;
@@ -37,7 +37,7 @@ li {
 	box-shadow: none;
 	width: 90%;
 	height: 30px;
-  color: #fff;
+	color: #fff;
 
 	background: transparent;
 	resize: none;
@@ -230,7 +230,7 @@ input::placeholder {
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 22px;
-  margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 .set-name input {
 	width: 453px;
@@ -240,9 +240,9 @@ input::placeholder {
 	backdrop-filter: blur(2px);
 	/* Note: backdrop-filter has minimal browser support */
 	border: none;
-  color: #fff;
-  font-size: 14px;
-  padding-left: 30px;
+	color: #fff;
+	font-size: 14px;
+	padding-left: 30px;
 	border-radius: 11px;
 }
 .set-name input:focus {
@@ -290,8 +290,8 @@ input::placeholder {
 	left: 0;
 	z-index: 500;
 	opacity: 0;
-  background: #fff;
-  /* display: none; */
+	background:url('/static/images/2k_stars_milky_way.jpg');
+	/* display: none; */
 }
 
 #lottie-confetis {
@@ -301,7 +301,49 @@ input::placeholder {
 	transform: translate(-50%, -50%);
 	height: 600px;
 	opacity: 0;
-  width:0;
+	width: 0;
 	z-index: 500;
+}
+#robot-text {
+	display: flex;
+	flex-direction: column;
 
+	position: absolute;
+	top: 10%;
+	left: 45%;
+	transform: translate(-40%, -10%);
+	background: rgba(100, 100, 100, 0.58);
+	box-shadow: 0px 4px 41px 16px rgba(0, 0, 0, 0.25);
+	backdrop-filter: blur(10px);
+	/* Note: backdrop-filter has minimal browser support */
+
+	border-radius: 29px;
+	width: 484.49px;
+	height: 206px;
+	padding: 18px 28px;
+	gap: 22px;
+  opacity: 0;
+}
+#robot-text p {
+	display: flex;
+	align-items: center;
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 18px;
+}
+#robot-text h3 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 303.26px;
+	height: 40px;
+	background: linear-gradient(90deg, #696969 0%, rgba(83, 83, 83, 0) 100%);
+	border-radius: 30px;
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 17px;
 }

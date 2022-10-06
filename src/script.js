@@ -2,12 +2,14 @@
 import './style.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import GUI from 'lil-gui';
 import gsap from 'gsap';
 
 /*==================== THREE.js Section====================*/
 // THREE.js
 // Canvas
-
+const gui = new GUI();
 
 const clock = new THREE.Clock()
 const elapsedTime = clock.getElapsedTime()
@@ -85,7 +87,21 @@ scene.add(ambientLight)
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
 directionalLight.position.set(0, 2, 23)
 scene.add(directionalLight)
+/**
+ * Sizes
+ */
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight
+}
 
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+camera.position.z = 3
+scene.add(camera)
 
 /**
  * Object
@@ -147,13 +163,57 @@ marsOrbit.rotation.x = Math.PI * 0.08
 
 
 scene.add(earthOrbit, marsOrbit)
-/**
- * Sizes
- */
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
-}
+// Robot
+const tl = gsap.timeline();
+const gltfLoader = new GLTFLoader()
+let mixer = null
+let robot
+const textBlock = document.querySelector('#robot-text')
+
+gltfLoader.load(
+  'model/360_sphere_robot.glb',
+  (gltf) => {
+    //add multiple objects to the scene by duplicating the gltf object children array
+    // const children = [...gltf.scene.children]
+    // for (const child of children) {mes
+    //   scene.add(child)
+
+    // }
+    // add animation to the model
+    robot = gltf.scene
+    console.log(robot);
+    mixer = new THREE.AnimationMixer(robot)
+    const action = mixer.clipAction(gltf.animations[0])
+    action.play()
+
+    // we can also just add the group of scene
+    // scale the model to fit the screen
+
+    robot.scale.set(0.9, 0.9, 0.9)
+    // robot.position.set(-1.8, 1.642, -10)
+    gsap.set(robot.position, { x: -1.8, y: 1.642, z: -10 })
+    gsap.to(robot.position, { z: 0, duration: 2.5,delay:5})
+    gsap.to(textBlock, { opacity: 1, duration: 2.5,delay: 7.5 })
+
+
+    robot.rotation.y = 0.439
+    robot.rotation.x = 0.516
+    robot.rotation.z = -0.102
+
+    gui.add(robot.rotation, "y").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationy')
+    gui.add(robot.rotation, "x").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationx')
+    gui.add(robot.rotation, "z").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationz')
+    gui.add(robot.position, "x").min(-10).max(10).step(0.001).name('robot positionx')
+    gui.add(robot.position, "y").min(-10).max(10).step(0.001).name('robot positiony')
+    gui.add(robot.position, "z").min(-10).max(10).step(0.001).name('robot positionz')
+
+    scene.add(robot)
+  }
+)
+const robotPosition = new THREE.Vector3(-1.8, 1.642, 0)
+
+
+
 
 window.addEventListener('resize', () => {
   // Update sizes
@@ -169,13 +229,7 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.z = 3
-scene.add(camera)
+
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -201,11 +255,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 
-
+let previousTime = 0
 const tick = () => {
 
   const elapsedTime = clock.getElapsedTime()
-
+  const deltaTime = elapsedTime - previousTime
+  previousTime = elapsedTime
   // Update controls
   controls.update()
   // Update particles
@@ -216,6 +271,9 @@ const tick = () => {
   sun.rotation.y -= 0.02
   earthOrbit.rotation.y += 0.008
   marsOrbit.rotation.y += 0.01
+  if (mixer != null) {
+    mixer.update(deltaTime)
+  }
 
   // Render
   renderer.render(scene, camera)
@@ -361,7 +419,7 @@ marsiensGroup.addEventListener("click", () => {
 
 // refresh page to get new messages
 function receivedMessage(message) {
-  console.log(message);
+
   messages.push(message)
   let messReceived;
   const messageDate = new Date(message.time)
@@ -369,20 +427,13 @@ function receivedMessage(message) {
   const messMin = messageDate.getMinutes();
   if (message.room === userRoom) {
 
-    const words = message.value.split(" ")
-    if (words.includes("/confetis")) {
-      const confetis = document.querySelector("#lottie-confetis");
-      confetis.style.width = "886px";
 
-      setTimeout(lottieAnim('#lottie-confetis', 'https://assets7.lottiefiles.com/packages/lf20_s1ewowgl.json', false), 300);
-
-    }
 
 
 
     messReceived =
       `
-
+  <div id="user-mess-wrapper">
   <div class="text-chatleft">
     <img src="images/Avatar-Profile-Vector-PNG-File.png" alt="avatar" class="avatar">
     <div class="user-message">
@@ -391,15 +442,13 @@ function receivedMessage(message) {
     </div>
   </div>
   <span class="time">${messHour}h${messMin}</span>
-
+  </div>
 `;
-messagesContainer.insertAdjacentHTML("beforeend", messReceived);
+    comment.insertAdjacentHTML("beforeend", messReceived);
 
 
 
-      // if (message.user.id === socket.id) {
-      //   messagesContainer.style.flexDirection = "row-reverse";
-      // }
+
 
 
   }
@@ -421,7 +470,7 @@ form.addEventListener("submit", (e) => {
 
   const messageValue = document.querySelector("#your-message").value;
   const words = messageValue.split(" ")
-  if (words.includes("/confetis")) {
+  if (words.includes("/confettis")) {
     const confetis = document.querySelector("#lottie-confetis");
     confetis.style.width = "886px";
 
@@ -474,14 +523,15 @@ ctaBtn.addEventListener("click", (e) => {
   handleUsername(e);
 
   gsap.to(chatroomWrapper, { duration: 1, scaleX: 1, scaleY: 1, ease: "power4.out" });
-  gsap.to(login, { duration: 1, scaleX: 0, scaleY: 0, ease: "power4.out" });
+  gsap.to(login, { duration: 1.5, scaleX: 0, scaleY: 0, ease: "power4.out" });
+  gsap.to(textBlock, { duration: 1, opacity: 0,  ease: "power4.out" });
   titleChat.style.display = "none";
 });
 // make pulse animation on ctaBtn
 gsap.to(ctaBtn, { duration: 0.8, scale: 1.1, ease: "bounce", repeat: -1, yoyo: true });
 
 
-lottieAnim('#lottie-animation', 'https://assets5.lottiefiles.com/packages/lf20_bqmgf5tx.json', false)
+lottieAnim('#lottie-animation', 'https://assets3.lottiefiles.com/private_files/lf30_hueeaqbh.json', false)
 // lottie Animations
 
 function lottieAnim(target, path, loop) {

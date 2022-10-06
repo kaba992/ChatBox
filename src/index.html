@@ -17,15 +17,26 @@
   <canvas class="webgl"></canvas>
   <div id="lottie-animation"></div>
   <div id="lottie-confetis"></div>
+  <div id="robot-text">
+    <h3>Bienvenue dans la Galaxie XXX</h3>
+    <p>
+      Terriens, votre mission est simple : réunir les planètes égarées.
+      Vous aurez à disposition deux canaux sur lesquels vous pourriez communiquer avec les rprésentants de chaque
+      planète. Voici le signal secret a envoyé si la mission s’avère être un succès: /confettis
+      Bonne chance...
+    </p>
+  </div>
   <div class="containers">
     <h1 class="title-chat">CHAT-ROOM</h1>
     <div class="login">
       <div class="set-name">
         <form method="GET" id="set-username">
-          <label for="your-name" class="form-label">Your name</label>
-          <input type="text" name="content" id="your-name" class="set-name-input" placeholder="Entrez votre nom" required>
+          <label for="your-name" class="form-label">Votre nom</label>
+          <input type="text" name="content" id="your-name" class="set-name-input" placeholder="Entrez votre nom"
+            required>
         </form>
       </div>
+    
       <div class="cta-button">
         <span>Go</span>
       </div>
@@ -48,8 +59,8 @@
       </div>
       <div id="chatroom">
         <div id="messages">
-          <div id="user-mess-wrapper">
-            </div>
+
+
 
         </div>
         <form action="#" id="comment-form">
@@ -90,7 +101,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"
     integrity="sha512-yAr4fN9WZH6hESbOwoFZGtSgOP+LSZbs/JeoDr02pOX4yUFfI++qC9YwIQXIGffhnzliykJtdWTV/v3PxSz8aw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="threejs-text-sprite.js"></script>
+  <script type="/module" src="threejs-text-sprite.js"></script>
   <!-- <script src="script.js"></script> -->
 
 </body>

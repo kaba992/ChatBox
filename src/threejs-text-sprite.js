@@ -1,7 +1,12 @@
+
+
+import './style.css'
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 /**
  * @author Roger Qi / https://github.com/SouthpawGoblin
  * @description function for generating multi-line text sprite with Three.js.
- * @param {*} text text to show on sprite, use '\n' to seperate lines 
+ * @param {*} text text to show on sprite, use '\n' to seperate lines
  * @param {*} config {
  *   fontFace: string,
  *   fontSize: number,
@@ -13,7 +18,7 @@
  *   borderColor: string(rgba),
  *   borderRadius: number,
  *   backgroundColor: string(rgba)
- * } 
+ * }
  */
 var generateTextSprite = function(text, config) {
   config || (config = { });
@@ -31,17 +36,17 @@ var generateTextSprite = function(text, config) {
 
   var ruler = document.createElement('canvas').getContext('2d');
   ruler.font = (fontBold ?  'Bold ' : '') + (fontItalic ? 'Italic ' : '') + fontSize + 'px ' + fontFace;
-    
+
   var textLines = text.split('\n');
   var textWidth = 0;
   // canvas width shall be based on the longest width of text lines
   textLines.forEach(function(line) {
     var metrics = ruler.measureText(line);
-    textWidth = metrics.width > textWidth ? metrics.width : textWidth;  
+    textWidth = metrics.width > textWidth ? metrics.width : textWidth;
   });
   // 1.4 is extra height factor for text below baseline: g,j,p,q.
   var textHeight = fontSize * 1.4 * textLines.length;
-  
+
   // texture canvas
   var canvas = document.createElement('canvas');
   canvas.width = _ceilPow2(textWidth);
@@ -54,7 +59,7 @@ var generateTextSprite = function(text, config) {
   context.strokeStyle = borderColor;
   context.lineWidth = borderThickness;
   _roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, textHeight + borderThickness, borderRadius);
-  
+
   // draw text
   context.fillStyle = fontColor;
   context.textAlign = textAlign;
@@ -70,23 +75,23 @@ var generateTextSprite = function(text, config) {
     context.fillText(line, fillTextX[textAlign], curY);
     curY += fontSize * 1.4;
   })
-  
+
   // generate sprite
   var texture = new THREE.Texture(canvas);
   texture.needsUpdate = true;
-  var spriteMaterial = new THREE.SpriteMaterial({ 
+  var spriteMaterial = new THREE.SpriteMaterial({
     map: texture,
     transparent: true
   });
   var sprite = new THREE.Sprite(spriteMaterial);
   sprite.scale.set(canvas.width / 2, canvas.height / 2, 1);
-  
+
   return sprite;
 
   // ceil the input number to the nearest powers of 2
   function _ceilPow2(num) {
     var i = 0;
-    while (num > Math.pow(2, i)) { 
+    while (num > Math.pow(2, i)) {
       i++;
     }
     return Math.pow(2, i);
