@@ -9,7 +9,7 @@ import gsap from 'gsap';
 /*==================== THREE.js Section====================*/
 // THREE.js
 // Canvas
-const gui = new GUI();
+// const gui = new GUI();
 
 const clock = new THREE.Clock()
 const elapsedTime = clock.getElapsedTime()
@@ -181,7 +181,7 @@ gltfLoader.load(
     // }
     // add animation to the model
     robot = gltf.scene
-    console.log(robot);
+
     mixer = new THREE.AnimationMixer(robot)
     const action = mixer.clipAction(gltf.animations[0])
     action.play()
@@ -191,21 +191,20 @@ gltfLoader.load(
 
     robot.scale.set(0.9, 0.9, 0.9)
     // robot.position.set(-1.8, 1.642, -10)
-    gsap.set(robot.position, { x: -1.8, y: 1.642, z: -10 })
-    gsap.to(robot.position, { z: 0, duration: 2.5,delay:5})
-    gsap.to(textBlock, { opacity: 1, duration: 2.5,delay: 7.5 })
+    gsap.set(robot.position, { x: -1.9, y: 1.642, z: -10 })
+
 
 
     robot.rotation.y = 0.439
     robot.rotation.x = 0.516
     robot.rotation.z = -0.102
 
-    gui.add(robot.rotation, "y").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationy')
-    gui.add(robot.rotation, "x").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationx')
-    gui.add(robot.rotation, "z").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationz')
-    gui.add(robot.position, "x").min(-10).max(10).step(0.001).name('robot positionx')
-    gui.add(robot.position, "y").min(-10).max(10).step(0.001).name('robot positiony')
-    gui.add(robot.position, "z").min(-10).max(10).step(0.001).name('robot positionz')
+    // gui.add(robot.rotation, "y").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationy')
+    // gui.add(robot.rotation, "x").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationx')
+    // gui.add(robot.rotation, "z").min(-Math.PI).max(Math.PI).step(0.001).name('robot rotationz')
+    // gui.add(robot.position, "x").min(-10).max(10).step(0.001).name('robot positionx')
+    // gui.add(robot.position, "y").min(-10).max(10).step(0.001).name('robot positiony')
+    // gui.add(robot.position, "z").min(-10).max(10).step(0.001).name('robot positionz')
 
     scene.add(robot)
   }
@@ -290,6 +289,7 @@ tick()
 /*==================== Dom Section====================*/
 const baseUrl = 'https://whispering-chamber-09886.herokuapp.com';
 // http://localhost:3000
+// https://whispering-chamber-09886.herokuapp.com
 const form = document.querySelector("#comment-form");
 const setUsernameForm = document.querySelector("#set-username");
 const comment = document.querySelector("#messages");
@@ -307,16 +307,24 @@ const messagesContainer = document.getElementById("user-mess-wrapper");
 const safeZone = document.querySelector(".safe-zone");
 const messages = []
 const sendBtn = document.querySelector(".send-btn");
+const avatars = document.querySelectorAll(".userAvatar");
+// let userAvatar = ""
+// avatars.forEach(avatar => {
+//   avatar.addEventListener("click", (e) => {
+//     userAvatar = e.target.src
 
-
-let users = []
+//   })
+// })
+// console.log(userAvatar)
+let users = []  // store all users
 let placeholder = document.querySelector("#your-message");
 
-let userRoom = "general";
+let userRoom = "general"; //set user default room to general
 const socket = io(baseUrl);
 
 placeholder.attributes.placeholder.value = "Envoyer un message dans @safe-zone";
 
+// change send button img
 placeholder.onfocus = () => { sendBtn.src = 'images/button-send.png'; }
 placeholder.onblur = () => { sendBtn.src = 'images/send-inactive.png'; }
 
@@ -324,32 +332,64 @@ socket.on("connect", () => {
   socket.emit("getMessages");
   socket.emit("getUsers");
 
-  // send message to server
-
 })
 
-// setInterval(() => { socket.emit("message", "je suis le roi du monde!"); }, 4000)
 
 // get user message
 socket.on("message", receivedMessage);
 
+// refresh page to get new messages
+function receivedMessage(message) {
+
+  messages.push(message)
+  let messReceived;
+  const messageDate = new Date(message.time)
+  const messHour = messageDate.getHours();
+  const messMin = messageDate.getMinutes();
+  if (message.room === userRoom) {
+    messReceived =
+      `
+  <div id="user-mess-wrapper">
+  <div class="text-chatleft">
+    <img src="images/Avatar-Profile-Vector-PNG-File.png" alt="avatar" class="avatar">
+    <div class="user-message">
+      <p class = "user-name">${message.user.name}</p>
+      <p>${message.value} </p>
+    </div>
+  </div>
+  <span class="time">${messHour}h${messMin}</span>
+  </div>
+`;
+    comment.insertAdjacentHTML("beforeend", messReceived);
+  }
+}
+
 // get list of connected
 socket.on("users", (utilisateurs) => {
-  const arraySlice = utilisateurs
-  const filtered = arraySlice.filter((username) => username.name !== "Anonymous");
-  console.log(filtered.length);
-  members.innerHTML = `Membres-${arraySlice.length}`;
-  users.push(arraySlice)
-  utilisateurs.forEach((user) => {
-    const userList = `
-     <div class="users-list">
-       <img src="images/Avatar-Profile-Vector-PNG-File.png" alt="avatar" class="avatar">
-        <li>${user.name}</li>
-     </div>
-      `;
-    usersList.insertAdjacentHTML("beforeend", userList);
-  })
+
+  const filtered = utilisateurs.filter((username) => username.name !== "Anonymous");
+
+  members.innerHTML = `Membres-${utilisateurs.length}`;
+  users.push(filtered)
+  displayUsersList();
 });
+function displayUsersList() {
+
+  users.forEach((user) => {
+    user.forEach((u) => {
+
+      const userList = `
+       <div class="users-list">
+         <img src="images/Avatar-Profile-Vector-PNG-File.png" alt="avatar" class="avatar">
+          <li>${u.name}</li>
+       </div>
+        `;
+
+      usersList.insertAdjacentHTML("beforeend", userList);
+    })
+  })
+}
+
 
 // get history of messages
 socket.on("messages", (messages) => {
@@ -374,6 +414,7 @@ socket.on("messages", (messages) => {
 //     // child = messagesContainer.lastElementChild;
 //   }
 // }
+
 // groupes Management
 safeZone.addEventListener("click", () => {
   socket.emit("joinRoom", "general");
@@ -415,47 +456,7 @@ marsiensGroup.addEventListener("click", () => {
   earthCircle.visible = false
 })
 
-//change username
 
-// refresh page to get new messages
-function receivedMessage(message) {
-
-  messages.push(message)
-  let messReceived;
-  const messageDate = new Date(message.time)
-  const messHour = messageDate.getHours();
-  const messMin = messageDate.getMinutes();
-  if (message.room === userRoom) {
-
-
-
-
-
-    messReceived =
-      `
-  <div id="user-mess-wrapper">
-  <div class="text-chatleft">
-    <img src="images/Avatar-Profile-Vector-PNG-File.png" alt="avatar" class="avatar">
-    <div class="user-message">
-      <p class = "user-name">${message.user.name}</p>
-      <p>${message.value} </p>
-    </div>
-  </div>
-  <span class="time">${messHour}h${messMin}</span>
-  </div>
-`;
-    comment.insertAdjacentHTML("beforeend", messReceived);
-
-
-
-
-
-
-  }
-}
-// en attendant
-
-// change placeholder text
 
 
 
@@ -466,25 +467,24 @@ form.addEventListener("submit", (e) => {
     e.stopPropagation();
     e.stopImmediatePropagation();
   }
-
-
   const messageValue = document.querySelector("#your-message").value;
+  // words.includes("/confettis")
   const words = messageValue.split(" ")
-  if (words.includes("/confettis")) {
+  if (messageValue === "confettis") {
     const confetis = document.querySelector("#lottie-confetis");
     confetis.style.width = "886px";
 
-    setTimeout(lottieAnim('#lottie-confetis', 'https://assets7.lottiefiles.com/packages/lf20_s1ewowgl.json', false), 300);
+    setTimeout(lottieAnim('#lottie-confetis', 'https://assets7.lottiefiles.com/packages/lf20_tkeaajkc.json', false), 300);
 
   }
 
   const message = { type: "", value: messageValue, room: userRoom }
-  console.log(message);
   socket.emit("message", message);
 
   document.querySelector("#your-message").value = "";
 });
 
+//  prevent user valid input with enter key
 setUsernameForm.onkeypress = function (e) {
   let key = e.charCode || e.keyCode || 0;
   if (key == 13) {
@@ -493,45 +493,68 @@ setUsernameForm.onkeypress = function (e) {
   }
 }
 
+// set username
 function handleUsername() {
   const username = document.querySelector(".set-name-input").value;
-
-
   socket.emit("setUsername", username);
-  function updateUsername(arg) {
-    // set prev username to new username
-    users.map((user) => {
-      user.forEach((user) => {
-        console.log(arg.name);
-        if (user.id === arg.id) {
-          user.name = username;
-        }
-      })
-
-
-    })
-  }
-  socket.on("updateUsername", updateUsername);
 }
+function updateUsername(arg) {
+  // set prev username to new username
+  const newUsers = users.map((user) => {
 
+    if (user.id === arg.id) {
+      user.name = arg.name
+    }
+    return user
+  })
+
+  users = newUsers
+
+}
+socket.on("updateUsername", updateUsername);
 // Animations
 
-gsap.set(chatroomWrapper, { scaleX: 0, scaleY: 0, transformOrigin: "center" })
+gsap.set(chatroomWrapper, { scaleX: 0, scaleY: 0, opacity: 0, transformOrigin: "center" })
 
 ctaBtn.addEventListener("click", (e) => {
 
   handleUsername(e);
 
-  gsap.to(chatroomWrapper, { duration: 1, scaleX: 1, scaleY: 1, ease: "power4.out" });
+  gsap.to(chatroomWrapper, { duration: 1, scaleX: 1, scaleY: 1, opacity: 1, display: "flex", ease: "power4.out" });
   gsap.to(login, { duration: 1.5, scaleX: 0, scaleY: 0, ease: "power4.out" });
-  gsap.to(textBlock, { duration: 1, opacity: 0,  ease: "power4.out" });
+  gsap.to(textBlock, { duration: 1, opacity: 0, ease: "power4.out" });
   titleChat.style.display = "none";
 });
 // make pulse animation on ctaBtn
 gsap.to(ctaBtn, { duration: 0.8, scale: 1.1, ease: "bounce", repeat: -1, yoyo: true });
 
+const loading = document.querySelector("#lottie-animation");
+const animationLoad = lottie.loadAnimation({
+  container: loading, // the dom loading that will contain the animation
+  renderer: 'svg',
+  loop: false,
+  autoplay: false,
+  path: "images/venus.json", // the path to the animation json
+  preserveAspectRatio: 'xMidYMid meet',
+});
 
-lottieAnim('#lottie-animation', 'https://assets3.lottiefiles.com/private_files/lf30_hueeaqbh.json', false)
+animationLoad.play();
+loading.style.opacity = 1;
+
+gsap.set(login, { opacity: 0, scale: 0, transformOrigin: "center" })
+// on animationLoad end
+animationLoad.addEventListener('complete', () => {
+  loading.style.display = 'none';
+  if (robot) {
+    gsap.to(robot.position, { z: 0, duration: 2.5, ease: "power4.out" });
+    gsap.to(textBlock, { opacity: 1, duration: 5, ease: "Back.easeOut", delay: 2.5 })
+  }
+  gsap.to(login, { duration: 2.5, opacity: 1,scale: 1, ease: "Back.easeOut",transformOrigin: "center",delay: 1.5 })
+  // animation.destroy();
+});
+
+
+// lottieAnim('#lottie-animation', 'https://assets3.lottiefiles.com/private_files/lf30_hueeaqbh.json', false)
 // lottie Animations
 
 function lottieAnim(target, path, loop) {

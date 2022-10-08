@@ -73,6 +73,7 @@ p {
 	height: 100%;
 	width: 100%;
 	z-index: 1;
+	display: none;
 }
 
 #chatroom {
@@ -165,10 +166,15 @@ p {
 	max-width: 100%;
 	background: rgba(115, 123, 125, 0.22);
 	border-radius: 30px;
-	overflow-y: scroll;
+	/* overflow-y: scroll; */
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
 	border-radius: 30px;
+}
+
+#list-unstyled-users {
+	overflow-y: scroll;
+	max-height: 88%;
 }
 .users-list {
 	display: flex;
@@ -204,7 +210,7 @@ input::placeholder {
 .avatar {
 	width: 43px;
 	height: 43px;
-	border-radius: 11px;
+	border-radius: 50%;
 }
 
 .user-name {
@@ -215,10 +221,11 @@ input::placeholder {
 
 .login {
 	position: absolute;
-	top: 80%;
+	top: 77%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 1;
+	
 }
 #set-username {
 	display: flex;
@@ -253,13 +260,19 @@ input::placeholder {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 174px;
-	width: 174px;
+	text-align: center;
+	height: 8em;
+	width: 8em;
+	max-width: 160px;
+	max-height: 160px;
 	background: #b254df;
 	box-shadow: 0px 4px 19px 16px rgba(0, 0, 0, 0.25);
 	border-radius: 50%;
 	text-align: center;
-	margin: 83px auto;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 40px;
+	margin-top: 40px;
 	cursor: pointer;
 }
 
@@ -290,7 +303,7 @@ input::placeholder {
 	left: 0;
 	z-index: 500;
 	opacity: 0;
-	background:url('/static/images/2k_stars_milky_way.jpg');
+	background: url("/static/images/2k_stars_milky_way.jpg");
 	/* display: none; */
 }
 
@@ -307,23 +320,24 @@ input::placeholder {
 #robot-text {
 	display: flex;
 	flex-direction: column;
-
 	position: absolute;
-	top: 10%;
-	left: 45%;
-	transform: translate(-40%, -10%);
+	top: 22%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	background: rgba(100, 100, 100, 0.58);
 	box-shadow: 0px 4px 41px 16px rgba(0, 0, 0, 0.25);
 	backdrop-filter: blur(10px);
 	/* Note: backdrop-filter has minimal browser support */
 
 	border-radius: 29px;
+	/* margin-left: 20px; */
 	width: 484.49px;
 	height: 206px;
 	padding: 18px 28px;
 	gap: 22px;
-  opacity: 0;
+	opacity: 0;
 }
+
 #robot-text p {
 	display: flex;
 	align-items: center;
@@ -337,7 +351,8 @@ input::placeholder {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 303.26px;
+	width: 80%;
+	max-width: 303.26px;
 	height: 40px;
 	background: linear-gradient(90deg, #696969 0%, rgba(83, 83, 83, 0) 100%);
 	border-radius: 30px;
@@ -346,4 +361,18 @@ input::placeholder {
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 17px;
+}
+
+.avatars {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+	margin-top: 20px;
+}
+.avatars li {
+	cursor: pointer;
+}
+.avatars li:hover {
+	transform: scale(1.1);
 }
